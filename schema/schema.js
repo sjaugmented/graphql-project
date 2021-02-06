@@ -65,6 +65,16 @@ const PostType = new GraphQLObjectType({
 	}),
 })
 
+const MovieType = new GraphQLObjectType({
+	name: 'Movie',
+	description: 'Documentation for movie',
+	fields: () => ({
+		id: { type: GraphQLID },
+		title: { type: GraphQLString },
+		year: { type: GraphQLInt },
+	}),
+})
+
 // RootQuery
 const RootQuery = new GraphQLObjectType({
 	name: 'RootQueryType',
@@ -93,6 +103,14 @@ const RootQuery = new GraphQLObjectType({
 			args: { id: { type: GraphQLID } },
 			resolve(parent, args) {
 				return _.find(postsData, { id: args.id })
+			},
+		},
+
+		movie: {
+			type: MovieType,
+			args: { id: { type: GraphQLID }, title: { type: GraphQLString } },
+			resolve(parent, args) {
+				return _.find(moviesData, { id: args.id })
 			},
 		},
 	},
