@@ -1,30 +1,37 @@
 const graphql = require('graphql')
 const _ = require('lodash')
 
-// dummy data
+//#region  dummy data
 const usersData = [
 	{ id: '1', name: 'Bond', age: 36, profession: 'director' },
-	{ id: '13', name: 'Anna', age: 26, profession: 'programmer' },
-	{ id: '211', name: 'Bella', age: 16, profession: 'dancer' },
-	{ id: '19', name: 'Gina', age: 26, profession: 'whore' },
-	{ id: '150', name: 'Georgina', age: 36, profession: 'puppetteer' },
+	{ id: '2', name: 'Anna', age: 26, profession: 'programmer' },
+	{ id: '3', name: 'Bella', age: 16, profession: 'dancer' },
+	{ id: '4', name: 'Gina', age: 26, profession: 'whore' },
+	{ id: '5', name: 'Georgina', age: 36, profession: 'puppetteer' },
 ]
 
 const hobbiesData = [
-	{ id: '1', title: 'Photography', description: 'duh' },
-	{ id: '2', title: 'Programming', description: 'duh' },
-	{ id: '3', title: 'Writing', description: 'duh' },
-	{ id: '4', title: 'Fisting', description: 'duh' },
-	{ id: '5', title: 'Gaming', description: 'duh' },
+	{ id: '1', title: 'Photography', description: 'duh', userId: '1' },
+	{ id: '2', title: 'Programming', description: 'duh', userId: '3' },
+	{ id: '3', title: 'Writing', description: 'duh', userId: '2' },
+	{ id: '4', title: 'Fisting', description: 'duh', userId: '4' },
+	{ id: '5', title: 'Gaming', description: 'duh', userId: '4' },
 ]
 
 const postsData = [
-	{ id: '1', comment: 'This is the first comment.' },
-	{ id: '2', comment: 'This is the second comment.' },
-	{ id: '3', comment: 'This is the third comment.' },
-	{ id: '4', comment: 'This is the fourth comment.' },
-	{ id: '5', comment: 'This is the last comment.' },
+	{ id: '1', comment: 'This is the first comment.', userId: '1' },
+	{ id: '2', comment: 'This is the second comment.', userId: '1' },
+	{ id: '3', comment: 'This is the third comment.', userId: '3' },
+	{ id: '4', comment: 'This is the fourth comment.', userId: '5' },
+	{ id: '5', comment: 'This is the last comment.', userId: '2' },
 ]
+
+const moviesData = [
+	{ id: '1', title: 'Big', year: 1987, userId: '1' },
+	{ id: '2', title: 'Apollo 13', year: 1996, userId: '1' },
+	{ id: '3', title: 'Road To Perdition', year: 2002, userId: '1' },
+]
+//#endregion
 
 const {
 	GraphQLObjectType,
@@ -43,6 +50,25 @@ const UserType = new GraphQLObjectType({
 		name: { type: GraphQLString },
 		age: { type: GraphQLInt },
 		profession: { type: GraphQLString },
+
+		posts: {
+			type: new graphql.GraphQLList(PostType),
+			resolve(parent, args) {
+				return _.filter(postsData, { userId: parent.id })
+			},
+		},
+		hobbies: {
+			type: new graphql.GraphQLList(HobbyType),
+			resolve(parent, args) {
+				return _.filter(hobbiesData, { userId: parent.id })
+			},
+		},
+		movies: {
+			type: new graphql.GraphQLList(MovieType),
+			resolve(parent, args) {
+				return _.filter(moviesData, { userId: parent.id })
+			},
+		},
 	}),
 })
 
@@ -53,6 +79,12 @@ const HobbyType = new GraphQLObjectType({
 		id: { type: GraphQLID },
 		title: { type: GraphQLString },
 		description: { type: GraphQLString },
+		user: {
+			type: UserType,
+			resolve(parent, args) {
+				return _.find(usersData, { id: parent.userId })
+			},
+		},
 	}),
 })
 
@@ -62,6 +94,12 @@ const PostType = new GraphQLObjectType({
 	fields: () => ({
 		id: { type: GraphQLID },
 		comment: { type: GraphQLString },
+		user: {
+			type: UserType,
+			resolve(parent, args) {
+				return _.find(usersData, { id: parent.userId })
+			},
+		},
 	}),
 })
 
@@ -72,6 +110,12 @@ const MovieType = new GraphQLObjectType({
 		id: { type: GraphQLID },
 		title: { type: GraphQLString },
 		year: { type: GraphQLInt },
+		user: {
+			type: UserType,
+			resolve(parent, args) {
+				return _.find(usersData, { id: parent.userId })
+			},
+		},
 	}),
 })
 
@@ -108,7 +152,7 @@ const RootQuery = new GraphQLObjectType({
 
 		movie: {
 			type: MovieType,
-			args: { id: { type: GraphQLID }, title: { type: GraphQLString } },
+			args: { id: { type: GraphQLID } },
 			resolve(parent, args) {
 				return _.find(moviesData, { id: args.id })
 			},
