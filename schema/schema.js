@@ -160,6 +160,74 @@ const RootQuery = new GraphQLObjectType({
 	},
 })
 
+// Mutations
+const Mutation = new GraphQLObjectType({
+	name: 'Mutation',
+	fields: {
+		createUser: {
+			type: UserType,
+			args: {
+				// id: {type: GraphQLID},
+				name: { type: GraphQLString },
+				age: { type: GraphQLInt },
+				profession: { type: GraphQLString },
+			},
+			resolve(parent, args) {
+				const user = {
+					name: args.name,
+					age: args.age,
+					profession: args.profession,
+				}
+				return user
+			},
+		},
+		createPost: {
+			type: PostType,
+			args: {
+				// id: {type: GraphQLInt},
+				comment: { type: GraphQLString },
+				resolve(parent, args) {
+					// const post = {
+					// 	comment: args.comment
+					// }
+					return {
+						comment: args.comment,
+					}
+				},
+			},
+		},
+		createHobby: {
+			type: HobbyType,
+			args: {
+				// id: {type: GraphQLID},
+				title: { type: GraphQLString },
+				description: { type: GraphQLString },
+				resolve(parent, args) {
+					return {
+						title: args.title,
+						description: args.description,
+					}
+				},
+			},
+		},
+		createMovie: {
+			type: MovieType,
+			args: {
+				// id: {type: GraphQLID},
+				title: { type: GraphQLString },
+				year: { type: GraphQLInt },
+				resolve(parent, args) {
+					return {
+						title: args.title,
+						year: args.year,
+					}
+				},
+			},
+		},
+	},
+})
+
 module.exports = new GraphQLSchema({
 	query: RootQuery,
+	mutation: Mutation,
 })
