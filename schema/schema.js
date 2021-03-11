@@ -133,12 +133,24 @@ const RootQuery = new GraphQLObjectType({
 				return _.find(usersData, { id: args.id })
 			},
 		},
+		users: {
+			type: new graphql.GraphQLList(UserType),
+			resolve(parent, args) {
+				return usersData
+			},
+		},
 
 		hobby: {
 			type: HobbyType,
 			args: { id: { type: GraphQLID } },
 			resolve(parent, args) {
 				return _.find(hobbiesData, { id: args.id })
+			},
+		},
+		hobbies: {
+			type: new graphql.GraphQLList(HobbyType),
+			resolve(parent, args) {
+				return hobbiesData
 			},
 		},
 
@@ -149,12 +161,24 @@ const RootQuery = new GraphQLObjectType({
 				return _.find(postsData, { id: args.id })
 			},
 		},
+		posts: {
+			type: new graphql.GraphQLList(PostType),
+			resolve(parent, args) {
+				return postsData
+			},
+		},
 
 		movie: {
 			type: MovieType,
 			args: { id: { type: GraphQLID } },
 			resolve(parent, args) {
 				return _.find(moviesData, { id: args.id })
+			},
+		},
+		movies: {
+			type: new graphql.GraphQLList(MovieType),
+			resolve(parent, args) {
+				return moviesData
 			},
 		},
 	},
@@ -186,14 +210,13 @@ const Mutation = new GraphQLObjectType({
 			args: {
 				// id: {type: GraphQLInt},
 				comment: { type: GraphQLString },
-				resolve(parent, args) {
-					// const post = {
-					// 	comment: args.comment
-					// }
-					return {
-						comment: args.comment,
-					}
-				},
+				userId: { type: GraphQLID },
+			},
+			resolve(parent, args) {
+				return {
+					comment: args.comment,
+					userId: args.userId,
+				}
 			},
 		},
 		createHobby: {
@@ -202,12 +225,14 @@ const Mutation = new GraphQLObjectType({
 				// id: {type: GraphQLID},
 				title: { type: GraphQLString },
 				description: { type: GraphQLString },
-				resolve(parent, args) {
-					return {
-						title: args.title,
-						description: args.description,
-					}
-				},
+				userId: { type: GraphQLID },
+			},
+			resolve(parent, args) {
+				return {
+					title: args.title,
+					description: args.description,
+					userId: args.userId,
+				}
 			},
 		},
 		createMovie: {
@@ -216,12 +241,14 @@ const Mutation = new GraphQLObjectType({
 				// id: {type: GraphQLID},
 				title: { type: GraphQLString },
 				year: { type: GraphQLInt },
-				resolve(parent, args) {
-					return {
-						title: args.title,
-						year: args.year,
-					}
-				},
+				userId: { type: GraphQLID },
+			},
+			resolve(parent, args) {
+				return {
+					title: args.title,
+					year: args.year,
+					userId: args.userId,
+				}
 			},
 		},
 	},
